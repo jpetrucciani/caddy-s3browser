@@ -87,6 +87,7 @@ func (b *S3Browser) renderHTML(w io.Writer, dir Directory) error {
 	return b.template.Execute(w, TemplateArgs{
 		SiteName: b.SiteName,
 		Dir:      dir,
+		Footer:   b.Footer,
 	})
 }
 

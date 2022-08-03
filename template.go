@@ -9,6 +9,7 @@ import (
 type TemplateArgs struct {
 	SiteName string
 	Dir      Directory
+	Footer   string
 }
 
 type Crumb struct {
@@ -52,10 +53,11 @@ const defaultTemplate = `<!DOCTYPE html>
 		<title>{{ if ne .Dir.Path "/" }}{{ PathBase .Dir.Path }} | {{ end }}{{ .SiteName }}</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
 <style>
 * { padding: 0; margin: 0; }
 body {
-	font-family: sans-serif;
+	font-family: "Roboto", sans-serif;
 	text-rendering: optimizespeed;
 	background-color: #ffffff;
 }
@@ -267,7 +269,7 @@ footer {
 						<td></td>
 						<td>
 							<a href="{{ html (PathDir .Dir.Path) }}">
-								<span class="goup">Go up</span>
+								<span class="goup">../</span>
 							</a>
 						</td>
 						<td>&mdash;</td>
@@ -308,8 +310,6 @@ footer {
 				</table>
 			</div>
 		</main>
-		<footer>
-			Served by S3 Browser via <a rel="noopener noreferrer" href="https://caddyserver.com">Caddy</a>
-		</footer>
+		<footer>{{ .Footer }}</footer>
 	</body>
 </html>`

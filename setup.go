@@ -54,6 +54,7 @@ type S3Browser struct {
 	Debug             bool          `json:"debug,omitempty"`
 	SignedURLRedirect bool          `json:"signed_url_redirect,omitempty"`
 	SortAlgorithm     string        `json:"sort_algorithm,omitempty"`
+	Footer            string        `json:"footer,omitempty"`
 
 	s3Cache        S3FsCache
 	template       *template.Template
@@ -99,6 +100,8 @@ func (b *S3Browser) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 			err = parseBoolArg(d, &b.SignedURLRedirect)
 		case "sort_algorithm":
 			err = parseStringArg(d, &b.SortAlgorithm)
+		case "footer":
+			err = parseStringArg(d, &b.Footer)
 		default:
 			err = d.Errf("not a valid s3browser option")
 		}
@@ -112,6 +115,16 @@ func (b *S3Browser) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 
 func (b *S3Browser) Provision(ctx caddy.Context) (err error) {
 	b.log = ctx.Logger(b)
+
+	// parse env vars
+	replacer := caddy.NewReplacer()
+	b.Region = replacer.ReplaceAll(b.Region, "")
+	b.Key = replacer.ReplaceAll(b.Key, "")
+	b.Secret = replacer.ReplaceAll(b.Secret, "")
+	b.Bucket = replacer.ReplaceAll(b.Bucket, "")
+	b.Endpoint = replacer.ReplaceAll(b.Endpoint, "")
+	b.SiteName = replacer.ReplaceAll(b.SiteName, "")
+	b.Footer = replacer.ReplaceAll(b.Footer, "")
 
 	var s3Sorter *S3FsSorter
 	if b.SortAlgorithm != "" {
